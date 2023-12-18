@@ -1,62 +1,103 @@
-# NestJS Typescript template for Cyclic
 
-[![Deploy to Cyclic](https://deploy.cyclic.app/button.svg)](https://deploy.cyclic.app/)
+# Monorepo with Turborepo (Nest & Vue)
 
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
-</p>
+This project is a minimal boilerplate code setup in 
+monorepo architecture using [Turborepo](https://turborepo.org/), containing 2 applications: Vue3 Frontend & Nest JS Backend.
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
-  
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-   
-## Description
+## Deployments
+- Frontend: https://nest-vue-turbo.vercel.app
+- Backend: https://nest-vue-turbo.herokuapp.com/api
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+## Core Features
+
+***Frontend***
+- Vite
+- PWA Support
+- Route Guards
+- Pinia State Management
+
+***Backend***
+- Core Authentication
+- JWT Access Token & HTTPOnly Cookie Refresh Token
+- Nest JS Route Guards
+- Prisma
+
+## Pre-Requisites
+- Node
+- Yarn
+- Docker & Docker-Compose
 
 ## Installation
 
-```bash
-$ npm install
-```
-
-## Running the app
+Can copy all this and execute to clone & install
 
 ```bash
-# development - watch mode
-$ npm run start:dev
-
-# development - debug & watch mode
-$ npm run start:debug
-
-# production mode
-$ npm run start
+  git clone https://github.com/ChrisLegaxy/nest-vue-turbo.git \
+  && cd nest-vue-turbo \
+  && yarn
 ```
 
-## Test
+## Setup
 
 ```bash
-# unit tests
-$ npm run test
+  # copy and replace with your env config
+  copy .env.sample .env
 
-# e2e tests
-$ npm run test:e2e
+  # due to prisma
+  copy ./apps/api/.env.sample ./apps/api/.env
 
-# test coverage
-$ npm run test:cov
+  # due to vite
+  copy ./apps/web/.env.sample ./apps/web/.env
+
+  docker-compose up -d
 ```
 
-## Support
+## Running in DEV
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+```bash
+  # this should bring everything up 
+  yarn dev
 
-## Stay in touch
+  # only web
+  yarn dev --scope=web
 
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+  # only api
+  yarn dev --scope=api
+```
 
-## License
+## Linting
 
-  Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+```bash
+  yarn lint
+```
+
+## Build
+
+```bash
+  yarn build
+```
+
+## Remote Caching
+
+```bash
+  npx turbo login
+  
+  npx turbo link
+```
+
+## Credits & References
+ - [Turbo Repo Docs](https://turborepo.org)
+ - [Amazing Turborepo Walkthrough](https://www.youtube.com/watch?v=YX5yoApjI3M&t=1s)
+ - [Nice Tutorial Both Part 1 & 2](https://www.youtube.com/watch?v=YQLw5kJ1yrQ&t=1005s)
+ - [Vite PWA Official & Sample on GitHub](https://vite-plugin-pwa.netlify.app)
+ - [Vite PWA Guide](https://rubenr.dev/en/pwa-vite)
+ - [Pinia](https://pinia.vuejs.org) (Might taken over VueX, I'm favoring this one)
+
+
+## Author
+
+> Chris Legaxy/Chris Van
+> 
+> Contact: chris.legaxy@gmail.com | chrisvan.vshmr@gmail.com
+> 
+> Website: https://chrisvan.netlify.app

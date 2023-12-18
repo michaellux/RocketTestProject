@@ -1,0 +1,55 @@
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  padding: 0;
+  margin: 0;
+}
+
+html {
+  font-family: 'Titillium Web', Tahoma, Geneva, Verdana, sans-serif !important;
+  font-size: 12px;
+
+  @media (min-width: 360px) {
+    font-size: 13px;
+  }
+
+  @media (min-width: 768px) {
+    font-size: 14.5px;
+  }
+
+  @media (min-width: 960px) {
+    font-size: 14.5px;
+  }
+
+  @media (min-width: 1264px) {
+    font-size: 16px;
+  }
+
+  @media (min-width: 1904px) {
+    font-size: 0.9vw;
+  }
+
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* width */
+::-webkit-scrollbar {
+  width: 0.25rem;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+  background: #f1f1f1; 
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.3);;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(12, 151, 173, 1)
+}

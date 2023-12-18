@@ -1,0 +1,15 @@
+{
+  "extends": "tsconfig/tsconfig.vue.json",
+  "compilerOptions": {
+    "baseUrl": "./",
+    "paths": {
+      "@/*": ["src/*"]
+    },
+    "types": [
+      "vite-plugin-pwa/client"
+    ]
+  },
+  "include": ["src/**/*.ts", "src/**/*.d.ts", "src/**/*.tsx", "src/**/*.vue"],
+  "exclude": ["src/prompt-sw.ts"],
+  "references": [{ "path": "./tsconfig.node.json" }]
+}

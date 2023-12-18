@@ -1,0 +1,11 @@
+{
+  "name": "tsconfig",
+  "version": "0.0.0",
+  "main": "index.js",
+  "private": true,
+  "files": [
+    "tsconfig.base.json",
+    "tsconfig.nest.json",
+    "tsconfig.vue.json"
+  ]
+}
