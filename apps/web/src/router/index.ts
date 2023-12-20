@@ -1,12 +1,15 @@
 import type { RouteRecordRaw } from "vue-router";
 import { createRouter, createWebHistory } from "vue-router";
-
 import Home from "@/pages/Home.vue";
-
+import PostBack from "@/pages/PostBack.vue";
 export const routes: RouteRecordRaw[] = [
   {
     path: "/",
     component: Home,
+  },
+  {
+    path: '/postback',
+    component: PostBack,
   },
   {
     path: "/:catchAll(.*)",
