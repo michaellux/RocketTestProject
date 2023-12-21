@@ -53,6 +53,7 @@ export const useLeadsStore = defineStore("lead", {
           },
           createdDate: formattedDate,
           contacts: [],
+          lead: [],
         };
 
         const rawContacts = rawLeadItem._embedded.contacts;

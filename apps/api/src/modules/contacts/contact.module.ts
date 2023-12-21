@@ -1,8 +1,8 @@
 import { Module } from '@nestjs/common';
 import { HttpModule } from '@nestjs/axios';
 
-import { ContactService } from './Contact.service';
-import { ContactController } from './Contact.controller';
+import { ContactService } from './contact.service';
+import { ContactController } from './contact.controller';
 
 @Module({
   imports: [HttpModule],
