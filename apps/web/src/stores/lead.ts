@@ -1,20 +1,26 @@
 import { defineStore } from "pinia";
+import type { Lead, LeadResponse } from "../@types/lead";
 import { LeadsApi } from "@/apis/lead";
 
 interface LeadsStore {
-
+  leadResponse: LeadResponse
 }
 
 export const useLeadsStore = defineStore("lead", {
-  state: (): LeadStore => {
+  state: (): LeadsStore => {
     return {
-      
+      leadResponse: null,
     };
   },
-  getters: {},
+  getters: {
+    getAllLeads(): Array<Lead> {
+      return this.leadResponse._embedded.leads;
+    },
+  },
   actions: {
-    async getAllLeads() {
-      const lead = await LeadsApi.getAllLeads();
+    async getRawLeadsData(accessToken: string) {
+      this.leadResponse = await LeadsApi.getRawLeadsData(accessToken);
+      console.log("this.leads", this.leadResponse);
     },
   },
 });

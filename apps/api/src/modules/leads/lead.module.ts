@@ -1,8 +1,12 @@
 import { Module } from '@nestjs/common';
+import { HttpModule } from '@nestjs/axios';
 
-import { LeadsController } from './lead.controller';
+import { LeadService } from './lead.service';
+import { LeadController } from './lead.controller';
 
 @Module({
-  controllers: [LeadsController],
+  imports: [HttpModule],
+  providers: [LeadService],
+  controllers: [LeadController],
 })
 export class LeadsModule {}

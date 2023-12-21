@@ -5,7 +5,12 @@ interface Auth {
   clientId: string | null
   secretKey: string | null
   code: string | null
-  accessToken: string | null
+  accessToken: {
+    "token_type": string
+    "expires_in": string
+    "access_token": string
+    "refresh_token": string
+  }
 }
 
 interface AuthStore {
