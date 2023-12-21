@@ -8,6 +8,13 @@
         <Column expander style="width: 5rem" />
         <Column field="name" header="Название" />
         <Column field="price" header="Бюджет" />
+        <Column header="Статус">
+          <template #body="slotProps">
+            <Tag :value="slotProps.data.status.name" />
+          </template>
+        </Column>
+        <Column field="responsibleUser.name" header="Ответственный" />
+        <Column field="createdDate" header="Дата создания" />
       </DataTable>
     </div>
   </div>
@@ -16,6 +23,7 @@
 <script lang="ts" setup>
 import DataTable from "primevue/datatable";
 import Column from "primevue/column";
+import Tag from "primevue/tag";
 import "primevue/resources/themes/lara-light-green/theme.css";
 
 import { ref } from "vue";
@@ -43,8 +51,10 @@ async function updateAuthInfo(e) {
       authStore.saveCode(e.data.code);
       await authStore.getAccessToken();
       if (authStore.auth.accessToken) {
-        await leadsStore.getRawLeadsData(authStore.auth.accessToken.access_token);
-        leads.value = leadsStore.getAllLeads;
+        await leadsStore.getRawLeadsData();
+        await leadsStore.getAllLeads();
+        if (leadsStore.leads)
+          leads.value = leadsStore.leads;
       }
     }
     // 4. Закрываем модальное окно

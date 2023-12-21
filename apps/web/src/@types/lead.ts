@@ -6,11 +6,11 @@ export interface LeadResponse {
     }
   }
   _embedded: {
-    leads: Lead[]
+    leads: RawLead[]
   }
 }
 
-export interface Lead {
+export interface RawLead {
   "id": number
   "name": string
   "price": number
@@ -34,4 +34,28 @@ export interface Lead {
   "is_price_modified_by_robot": boolean
   "_links": object
   "_embedded": object
+}
+
+export interface Lead {
+  "id": number
+  "name": string
+  "price": number
+  "status": Status
+  "responsibleUser": User
+  "createdDate": string
+}
+
+export interface User {
+  id: number
+  name: string
+  email: string
+  lang: string
+  rights: object
+}
+
+export interface Status {
+  id: number
+  name: string
+  pipeline_id: number
+  color: string
 }
