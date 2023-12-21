@@ -6,12 +6,17 @@ export class LeadController {
   private readonly logger = new Logger();
   @Get()
   async index(
+    @Param('with') with_: string,
     @Query('filter') filter: string,
     @Headers() headers: any,
   ): Promise<any> {
     this.logger.log('LeadController', `Фильтр: ${JSON.stringify(headers)}`);
-    const response = this.leadService.getRawLeadsData(filter, headers);
-    this.logger.log('LeadController', `Response: ${response}`);
+    const response = this.leadService.getRawLeadsData(
+      (with_ = 'contacts'),
+      filter,
+      headers,
+    );
+    this.logger.log('LeadController - GetLeads', `Response: ${response}`);
     return response;
   }
 

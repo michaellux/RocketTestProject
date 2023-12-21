@@ -7,20 +7,28 @@ export class LeadService {
   private readonly logger = new Logger();
   private url = `https://michaellux2011.amocrm.ru/api/v4/leads`;
 
-  async getRawLeadsData(filter: string, headers: any): Promise<any> {
+  async getRawLeadsData(
+    _with: string,
+    filter: string,
+    headers: any,
+  ): Promise<any> {
     try {
       this.logger.log('LeadService', `Фильтр: ${JSON.stringify(filter)}`);
       this.logger.log(
         'LeadService',
         `Header authorization: ${JSON.stringify(headers.authorization)}`,
       );
+
+      const fullUrl = `${this.url}?with=${_with}`;
+      this.logger.log('LeadService', `Full url: ${fullUrl}`);
       const response = await this.httpService
-        .get(this.url, {
+        .get(fullUrl, {
           headers: {
             authorization: headers.authorization,
           },
         })
         .toPromise();
+
       this.logger.log(
         'LeadService',
         `Response data: ${JSON.stringify(response.data)}`,
@@ -31,6 +39,10 @@ export class LeadService {
       const message = error.response
         ? error.response.data
         : 'Internal server error';
+      this.logger.log(
+        'LeadService - getRawLeadsData - исключение',
+        `Message: ${message}, Status: ${status}`,
+      );
       throw new HttpException(message, status);
     }
   }

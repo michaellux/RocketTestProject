@@ -33,16 +33,26 @@ export interface RawLead {
   "labor_cost": number
   "is_price_modified_by_robot": boolean
   "_links": object
-  "_embedded": object
+  "_embedded": any
 }
 
 export interface Lead {
+  lead: any[]
   "id": number
   "name": string
   "price": number
   "status": Status
   "responsibleUser": User
   "createdDate": string
+  "contacts": Array<Contact>
+}
+
+export interface Contact {
+  id: number
+  name: string
+  phone: string
+  email: string
+  avatar?: string
 }
 
 export interface User {

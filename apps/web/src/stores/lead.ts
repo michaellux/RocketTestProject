@@ -2,6 +2,7 @@ import { defineStore } from "pinia";
 import type { Lead, LeadResponse } from "../@types/lead";
 import { useAuthStore } from "./auth";
 import { LeadsApi } from "@/apis/lead";
+import { ContactsApi } from "@/apis/contact";
 interface LeadsStore {
   leadResponse: LeadResponse
   leads: Array<Lead>
@@ -31,7 +32,8 @@ export const useLeadsStore = defineStore("lead", {
         const status = await LeadsApi.getRawStatusData(accessToken, `${rawLeadItem.pipeline_id}`, `${rawLeadItem.status_id}`);
         const responsibleUser = await LeadsApi.getRawResponsibleUser(accessToken, `${rawLeadItem.responsible_user_id}`);
         const createdDate = new Date(rawLeadItem.created_at * 1000);
-        const formattedDate = `${createdDate.toLocaleDateString("ru-RU")} ${createdDate.toLocaleTimeString("ru-RU")}`
+        const formattedDate = `${createdDate.toLocaleDateString("ru-RU")} ${createdDate.toLocaleTimeString("ru-RU")}`;
+
         const lead: Lead = {
           id: rawLeadItem.id,
           name: rawLeadItem.name,
@@ -50,7 +52,19 @@ export const useLeadsStore = defineStore("lead", {
             rights: responsibleUser.rights,
           },
           createdDate: formattedDate,
+          contacts: [],
         };
+
+        const rawContacts = rawLeadItem._embedded.contacts;
+        rawContacts.map(async(rawContact) => {
+          const contact = await ContactsApi.getContactById(accessToken, rawContact.id);
+          lead.contacts = [...lead.contacts, {
+            id: contact.id,
+            name: contact.name,
+            phone: contact.phone,
+            email: contact.email,
+          }];
+        });
         return lead;
       });
 
