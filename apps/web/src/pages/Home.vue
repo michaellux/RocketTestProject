@@ -1,40 +1,75 @@
 <template>
-  <div class="container mx-auto my-5">
-    <div class="card">
-      <DataTable
-        v-model:expandedRows="expandedRows" :value="leads" data-key="id"
-        table-style="min-width: 60rem"
-      >
-        <Column expander style="width: 5rem" />
-        <Column field="name" header="Название" />
-        <Column field="price" header="Бюджет" />
-        <Column header="Статус">
-          <template #body="slotProps">
-            <Tag :value="slotProps.data.status.name" />
-          </template>
-        </Column>
-        <Column field="responsibleUser.name" header="Ответственный" />
-        <Column field="createdDate" header="Дата создания" />
-      </DataTable>
-    </div>
+  <div class="container mx-auto my-5 place-content-center grid">
+    <Card v-if="!isWaiting">
+      <template #title>
+        <h1 class="p-4">
+          Сделки {{ isLoadingData ? 'загружаются' : '' }}
+        </h1>
+      </template>
+      <template #content>
+        <div class="wrapper p-4">
+          <DataTable
+            v-model:expandedRows="expandedRows" :value="leads"
+            data-key="id" table-style="min-width: 60rem"
+          >
+            <div v-if="!isLoadingData">
+              <Column expander style="width: 5rem" />
+              <Column field="name" header="Название" />
+              <Column field="price" header="Бюджет" />
+              <Column header="Статус">
+                <template #body="slotProps">
+                  <Tag :value="slotProps.data.status.name" />
+                </template>
+              </Column>
+              <Column field="responsibleUser.name" header="Ответственный">
+                <template #body="slotProps">
+                  <Avatar icon="pi pi-user" style="background-color: #9c27b0; color: #ffffff" shape="circle" />
+                  {{ slotProps.data.responsibleUser.name }}
+                </template>
+              </Column>
+              <Column field="createdDate" header="Дата создания" />
+            </div>
+            <div class="grid place-content-center">
+              <ProgressSpinner
+                v-if="isLoadingData"
+                style="width: 50px; height: 50px" stroke-width="8" fill="var(--surface-ground)"
+                animation-duration=".5s" aria-label="Custom ProgressSpinner"
+              />
+            </div>
+          </DataTable>
+        </div>
+      </template>
+    </Card>
+    <ProgressSpinner
+      v-if="isWaiting"
+      style="width: 50px; height: 50px" stroke-width="8" fill="var(--surface-ground)"
+      animation-duration=".5s" aria-label="Custom ProgressSpinner"
+    />
   </div>
 </template>
 
 <script lang="ts" setup>
+import ProgressSpinner from "primevue/progressspinner";
+import Card from "primevue/card";
 import DataTable from "primevue/datatable";
 import Column from "primevue/column";
 import Tag from "primevue/tag";
+import Avatar from "primevue/avatar";
 import "primevue/resources/themes/lara-light-green/theme.css";
-
-import { ref } from "vue";
+import "primeicons/primeicons.css";
+import { onMounted, ref } from "vue";
 import { useLeadsStore } from "../stores/lead";
 import { useAuthStore } from "../stores/auth";
+import type { Lead } from "../@types/lead";
 const authStore = useAuthStore();
 const leadsStore = useLeadsStore();
-const leads = ref();
-const expandedRows = ref([]);
-const clientId = authStore.auth.clientId;
+const isWaiting = ref<boolean>(true);
+const isLoadingData = ref<boolean>(true);
+const leads = ref<Array<Lead>>();
+const expandedRows = ref<Array<any>>([]);
+const clientId: string = authStore.auth.clientId;
 let popup;
+
 auth();
 function auth() {
   const url = `https://www.amocrm.ru/oauth?client_id=${clientId}`;
@@ -51,10 +86,15 @@ async function updateAuthInfo(e) {
       authStore.saveCode(e.data.code);
       await authStore.getAccessToken();
       if (authStore.auth.accessToken) {
+        isWaiting.value = false;
+        isLoadingData.value = true;
         await leadsStore.getRawLeadsData();
         await leadsStore.getAllLeads();
-        if (leadsStore.leads)
+
+        if (leadsStore.leads) {
           leads.value = leadsStore.leads;
+          isLoadingData.value = false;
+        }
       }
     }
     // 4. Закрываем модальное окно

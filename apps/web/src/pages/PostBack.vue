@@ -1,8 +1,16 @@
 <template>
-  <div>Leads</div>
+  <div class="grid place-items-center">
+    <div class="card">
+      <InlineMessage severity="success">
+        Одобрение получено. Возвращаемся обратно
+      </InlineMessage>
+    </div>
+  </div>
 </template>
 
 <script lang="ts" setup>
+import InlineMessage from "primevue/inlinemessage";
+
 function getParameterByName(name: string, url: string | undefined): string | null {
   if (!url) url = window.location.href;
   name = name.replace(/[\[\]]/g, "\\$&");
