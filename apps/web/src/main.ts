@@ -1,6 +1,6 @@
 import { createApp } from "vue";
 import { createPinia } from "pinia";
-import PrimeVue from 'primevue/config';
+import PrimeVue from "primevue/config";
 import "@/assets/scss/main.scss";
 
 import router from "@/router";

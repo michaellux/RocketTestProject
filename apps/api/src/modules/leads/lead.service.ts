@@ -9,18 +9,24 @@ export class LeadService {
 
   async getRawLeadsData(
     _with: string,
-    filter: string,
+    query: string,
     headers: any,
   ): Promise<any> {
     try {
-      this.logger.log('LeadService', `Фильтр: ${JSON.stringify(filter)}`);
+      this.logger.log(
+        'LeadService - getRawLeadsData',
+        `Запрос: ${JSON.stringify(query)}`,
+      );
       this.logger.log(
         'LeadService',
         `Header authorization: ${JSON.stringify(headers.authorization)}`,
       );
 
-      const fullUrl = `${this.url}?with=${_with}`;
-      this.logger.log('LeadService', `Full url: ${fullUrl}`);
+      let fullUrl = `${this.url}?with=${_with}`;
+      if (query) {
+        fullUrl = fullUrl + `&query=${query}`;
+      }
+      this.logger.log('LeadService - getRawLeadsData', `Full url: ${fullUrl}`);
       const response = await this.httpService
         .get(fullUrl, {
           headers: {
@@ -28,11 +34,11 @@ export class LeadService {
           },
         })
         .toPromise();
+      /*if (query) {
+        //this.logger.log('LeadService', response);
+        return response;
+      }*/
 
-      this.logger.log(
-        'LeadService',
-        `Response data: ${JSON.stringify(response.data)}`,
-      );
       return response.data;
     } catch (error) {
       const status = error.response ? error.response.status : HttpStatus;

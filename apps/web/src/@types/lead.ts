@@ -37,7 +37,6 @@ export interface RawLead {
 }
 
 export interface Lead {
-  lead: any[]
   "id": number
   "name": string
   "price": number
