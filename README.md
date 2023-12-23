@@ -1,5 +1,7 @@
 # RocketTestProject
 
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/e9b54c6bc56b49648004d78df16cf2a4)](https://app.codacy.com/gh/michaellux/RocketTestProject?utm_source=github.com&utm_medium=referral&utm_content=michaellux/RocketTestProject&utm_campaign=Badge_Grade)
+
 ![Скриншот программы](./screenshots/Screenshot_2.png)
 ![Скриншот программы](./screenshots/Screenshot_3.png)
 
