@@ -8,7 +8,7 @@ export const routes: RouteRecordRaw[] = [
     component: Home,
   },
   {
-    path: '/postback',
+    path: "/postback",
     component: PostBack,
   },
   {
