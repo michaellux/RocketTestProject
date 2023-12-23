@@ -5,7 +5,7 @@
 
 Frontend: https://rocket-test-project-web.vercel.app/
 
-Backend: [https://combative-stockings-clam.cyclic.app/](https://combative-stockings-clam.cyclic.app/api/leads)
+Backend: [https://combative-stockings-clam.cyclic.app/api/leads](https://combative-stockings-clam.cyclic.app/api/leads)
 
 ## Установка локальная
 
