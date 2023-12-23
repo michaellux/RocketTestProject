@@ -3,7 +3,7 @@
     <Card v-if="!isWaiting">
       <template #title>
         <h1 class="p-4">
-          Сделки {{ isLoadingData ? 'загружаются' : '' }}
+          Сделки
         </h1>
       </template>
       <template #content>
@@ -11,7 +11,22 @@
           <DataTable
             v-model:expandedRows="expandedRows" :value="leads"
             data-key="id" table-style="min-width: 60rem"
+            :loading="isLoadingData"
           >
+            <template #header>
+              <div class="flex justify-content-end">
+                <span class="p-input-icon-left">
+                  <i class="pi pi-search" />
+                  <InputText v-model="query" placeholder="Найти..." @update:model-value="fetchLeads" />
+                </span>
+              </div>
+            </template>
+            <template #empty>
+              <p class="empty-text">
+                Сделок нет
+              </p>
+            </template>
+
             <Column expander style="width: 5rem" />
             <Column field="name" header="Название" />
             <Column field="price" header="Бюджет" />
@@ -44,13 +59,17 @@
               </Card>
             </template>
 
-            <div class="grid place-content-center">
-              <ProgressSpinner
-                v-if="isLoadingData"
-                style="width: 50px; height: 50px" stroke-width="8" fill="var(--surface-ground)"
-                animation-duration=".5s" aria-label="Custom ProgressSpinner"
-              />
-            </div>
+            <template #loading>
+              <div class="loadingdata">
+                <ProgressSpinner
+                  style="width: 50px; height: 50px" stroke-width="8" fill="var(--surface-ground)"
+                  animation-duration=".5s" aria-label="Custom ProgressSpinner"
+                />
+                <p class="text">
+                  Сделки загружаются
+                </p>
+              </div>
+            </template>
           </DataTable>
         </div>
       </template>
@@ -70,6 +89,7 @@ import DataTable from "primevue/datatable";
 import Column from "primevue/column";
 import Tag from "primevue/tag";
 import Avatar from "primevue/avatar";
+import InputText from "primevue/inputtext";
 import "primevue/resources/themes/lara-light-green/theme.css";
 import "primeicons/primeicons.css";
 import { onMounted, ref } from "vue";
@@ -80,6 +100,7 @@ const authStore = useAuthStore();
 const leadsStore = useLeadsStore();
 const isWaiting = ref<boolean>(true);
 const isLoadingData = ref<boolean>(true);
+const query = ref<string>("");
 const leads = ref<Array<Lead>>();
 const expandedRows = ref<Array<any>>([]);
 const clientId: string = authStore.auth.clientId;
@@ -100,25 +121,58 @@ async function updateAuthInfo(e) {
       console.log("Авторизация прошла");
       authStore.saveCode(e.data.code);
       await authStore.getAccessToken();
-      if (authStore.auth.accessToken) {
-        isWaiting.value = false;
-        isLoadingData.value = true;
-        await leadsStore.getRawLeadsData();
-        await leadsStore.getAllLeads();
-
-        if (leadsStore.leads) {
-          leads.value = leadsStore.leads;
-          isLoadingData.value = false;
-        }
-      }
+      fetchLeads();
     }
     // 4. Закрываем модальное окно
     popup.close();
   }
 }
+
+async function fetchLeads(query?: string) {
+  if (authStore.auth.accessToken) {
+    isWaiting.value = false;
+    isLoadingData.value = true;
+    await leadsStore.getRawLeadsData(query);
+    await leadsStore.getAllLeads();
+
+    if (leadsStore.leads) {
+      leads.value = leadsStore.leads;
+      isLoadingData.value = false;
+    }
+  }
+}
 </script>
 
 <style>
+.p-datatable .p-datatable-header {
+    background: #f9fafb;
+    color: #374151;
+    border: 1px solid #e5e7eb;
+    border-width: 1px 0 1px 0;
+    padding: 1rem 1rem;
+    font-weight: 700;
+}
+.p-input-icon-left > .p-inputtext {
+    padding-left: 2.5rem;
+}
+.p-component, .p-component * {
+    box-sizing: border-box;
+}
+.p-inputtext {
+    font-family: var(--font-family);
+    font-feature-settings: var(--font-feature-settings, normal);
+    font-size: 1rem;
+    color: #4b5563;
+    background: #ffffff;
+    padding: 0.75rem 0.75rem;
+    border: 1px solid #d1d5db;
+    transition: background-color 0.2s, color 0.2s, border-color 0.2s, box-shadow 0.2s;
+    appearance: none;
+    border-radius: 6px;
+}
+.p-input-icon-left > .p-inputtext {
+    padding-left: 2.5rem;
+}
 .p-datatable .p-datatable-thead tr th {
     text-align: left;
     padding: 1rem 1rem;
@@ -135,12 +189,27 @@ async function updateAuthInfo(e) {
     border-width: 0 0 1px 0;
     padding: 1rem 1rem;
 }
-
 .p-tag-value {
   padding: 0.4rem;
 }
-
 .contacts-title {
   font-size: 1rem;
+}
+.loadingdata {
+  display: grid;
+  place-items: center;
+  gap: 1rem;
+}
+.loadingdata .text {
+  color: white;
+  font-weight: bold;
+  font-size: larger;
+}
+.pi-search {
+  position: absolute;
+  top: 1rem;
+}
+.empty-text {
+  text-align: center;
 }
 </style>

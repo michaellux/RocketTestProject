@@ -18,58 +18,63 @@ export const useLeadsStore = defineStore("lead", {
   getters: {
   },
   actions: {
-    async getRawLeadsData() {
+    async getRawLeadsData(query?: string) {
       const authStore = useAuthStore();
       const accessToken = authStore.auth.accessToken.access_token;
-      this.leadResponse = await LeadsApi.getRawLeadsData(accessToken);
+      this.leadResponse = await LeadsApi.getRawLeadsData(accessToken, query);
       console.log("this.leads", this.leadResponse);
     },
-    async getAllLeads(): Promise<Lead[]> {
+    async getAllLeads() {
       const authStore = useAuthStore();
       const accessToken = authStore.auth.accessToken.access_token;
+      const _embedded = this.leadResponse._embedded;
+      if (_embedded) {
+        const leadPromises = _embedded.leads.map(async(rawLeadItem) => {
+          const status = await LeadsApi.getRawStatusData(accessToken, `${rawLeadItem.pipeline_id}`, `${rawLeadItem.status_id}`);
+          const responsibleUser = await LeadsApi.getRawResponsibleUser(accessToken, `${rawLeadItem.responsible_user_id}`);
+          const createdDate = new Date(rawLeadItem.created_at * 1000);
+          const formattedDate = `${createdDate.toLocaleDateString("ru-RU")} ${createdDate.toLocaleTimeString("ru-RU")}`;
 
-      const leadPromises = this.leadResponse._embedded.leads.map(async(rawLeadItem) => {
-        const status = await LeadsApi.getRawStatusData(accessToken, `${rawLeadItem.pipeline_id}`, `${rawLeadItem.status_id}`);
-        const responsibleUser = await LeadsApi.getRawResponsibleUser(accessToken, `${rawLeadItem.responsible_user_id}`);
-        const createdDate = new Date(rawLeadItem.created_at * 1000);
-        const formattedDate = `${createdDate.toLocaleDateString("ru-RU")} ${createdDate.toLocaleTimeString("ru-RU")}`;
+          const lead: Lead = {
+            id: rawLeadItem.id,
+            name: rawLeadItem.name,
+            price: rawLeadItem.price,
+            status: {
+              id: status.id,
+              name: status.name,
+              pipeline_id: status.pipeline_id,
+              color: status.color,
+            },
+            responsibleUser: {
+              id: responsibleUser.id,
+              name: responsibleUser.name,
+              email: responsibleUser.email,
+              lang: responsibleUser.lang,
+              rights: responsibleUser.rights,
+            },
+            createdDate: formattedDate,
+            contacts: [],
+          };
 
-        const lead: Lead = {
-          id: rawLeadItem.id,
-          name: rawLeadItem.name,
-          price: rawLeadItem.price,
-          status: {
-            id: status.id,
-            name: status.name,
-            pipeline_id: status.pipeline_id,
-            color: status.color,
-          },
-          responsibleUser: {
-            id: responsibleUser.id,
-            name: responsibleUser.name,
-            email: responsibleUser.email,
-            lang: responsibleUser.lang,
-            rights: responsibleUser.rights,
-          },
-          createdDate: formattedDate,
-          contacts: [],
-        };
+          const rawContacts = rawLeadItem._embedded.contacts;
+          const contactPromises = rawContacts.map(rawContact => ContactsApi.getContactById(accessToken, rawContact.id));
+          const contacts = await Promise.all(contactPromises);
 
-        const rawContacts = rawLeadItem._embedded.contacts;
-        const contactPromises = rawContacts.map(rawContact => ContactsApi.getContactById(accessToken, rawContact.id));
-        const contacts = await Promise.all(contactPromises);
+          lead.contacts = contacts.map(contact => ({
+            id: contact.id,
+            name: contact.name,
+            phone: contact.custom_fields_values.find(obj => obj.field_name === "Телефон").values.map(obj => obj.value).join(", "),
+            email: contact.custom_fields_values.find(obj => obj.field_name === "Email").values.map(obj => obj.value).join(", "),
+          }));
 
-        lead.contacts = contacts.map(contact => ({
-          id: contact.id,
-          name: contact.name,
-          phone: contact.custom_fields_values.find(obj => obj.field_name === "Телефон").values.map(obj => obj.value).join(", "),
-          email: contact.custom_fields_values.find(obj => obj.field_name === "Email").values.map(obj => obj.value).join(", "),
-        }));
+          return lead;
+        });
 
-        return lead;
-      });
-
-      this.leads = await Promise.all(leadPromises);
+        this.leads = await Promise.all(leadPromises);
+      }
+      else {
+        this.leads = [];
+      }
     },
   },
 });

@@ -7,13 +7,13 @@ export class LeadController {
   @Get()
   async index(
     @Param('with') with_: string,
-    @Query('filter') filter: string,
     @Headers() headers: any,
+    @Query('query') query?: string,
   ): Promise<any> {
-    this.logger.log('LeadController', `Фильтр: ${JSON.stringify(headers)}`);
+    this.logger.log('LeadController', `Запрос: ${JSON.stringify(query)}`);
     const response = this.leadService.getRawLeadsData(
       (with_ = 'contacts'),
-      filter,
+      query,
       headers,
     );
     this.logger.log('LeadController - GetLeads', `Response: ${response}`);
