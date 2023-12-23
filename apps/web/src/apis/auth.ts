@@ -10,7 +10,7 @@ export const AuthApi = {
       client_secret: secretKey,
       grant_type: "authorization_code",
       code,
-      redirect_uri: "http://localhost:3000/postback",
+      redirect_uri: "https://combative-stockings-clam.cyclic.app/postback",
     };
     console.log(data);
     const response = await httpClient.post("/api/auth", data, {
