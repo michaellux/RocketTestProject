@@ -1,4 +1,4 @@
-# RocketTestProject
+# RocketTestProject [![Codacy Badge](https://app.codacy.com/project/badge/Grade/387ce1e729f642b8a9edb71ac5b2c270)](https://app.codacy.com/gh/michaellux/RocketTestProject/dashboard?utm_source=gh&utm_medium=referral&utm_content=&utm_campaign=Badge_grade)
 
 ![Скриншот программы](./screenshots/Screenshot_2.png)
 ![Скриншот программы](./screenshots/Screenshot_3.png)
