@@ -53,24 +53,23 @@ export const useLeadsStore = defineStore("lead", {
           },
           createdDate: formattedDate,
           contacts: [],
-          lead: [],
         };
 
         const rawContacts = rawLeadItem._embedded.contacts;
-        rawContacts.map(async(rawContact) => {
-          const contact = await ContactsApi.getContactById(accessToken, rawContact.id);
-          lead.contacts = [...lead.contacts, {
-            id: contact.id,
-            name: contact.name,
-            phone: contact.phone,
-            email: contact.email,
-          }];
-        });
+        const contactPromises = rawContacts.map(rawContact => ContactsApi.getContactById(accessToken, rawContact.id));
+        const contacts = await Promise.all(contactPromises);
+
+        lead.contacts = contacts.map(contact => ({
+          id: contact.id,
+          name: contact.name,
+          phone: contact.custom_fields_values.find(obj => obj.field_name === "Телефон").values.map(obj => obj.value).join(", "),
+          email: contact.custom_fields_values.find(obj => obj.field_name === "Email").values.map(obj => obj.value).join(", "),
+        }));
+
         return lead;
       });
 
       this.leads = await Promise.all(leadPromises);
-      return this.leads;
     },
   },
 });

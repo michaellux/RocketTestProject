@@ -12,23 +12,38 @@
             v-model:expandedRows="expandedRows" :value="leads"
             data-key="id" table-style="min-width: 60rem"
           >
-            <div v-if="!isLoadingData">
-              <Column expander style="width: 5rem" />
-              <Column field="name" header="Название" />
-              <Column field="price" header="Бюджет" />
-              <Column header="Статус">
-                <template #body="slotProps">
-                  <Tag :value="slotProps.data.status.name" />
+            <Column expander style="width: 5rem" />
+            <Column field="name" header="Название" />
+            <Column field="price" header="Бюджет" />
+            <Column header="Статус">
+              <template #body="slotProps">
+                <Tag :value="slotProps.data.status.name" />
+              </template>
+            </Column>
+            <Column field="responsibleUser.name" header="Ответственный">
+              <template #body="slotProps">
+                <Avatar icon="pi pi-user" style="background-color: #9c27b0; color: #ffffff" shape="circle" />
+                {{ slotProps.data.responsibleUser.name }}
+              </template>
+            </Column>
+            <Column field="createdDate" header="Дата создания" />
+            <template #expansion="slotProps">
+              <Card>
+                <template #title>
+                  <h3 class="p-3 contacts-title">
+                    Контакты
+                  </h3>
                 </template>
-              </Column>
-              <Column field="responsibleUser.name" header="Ответственный">
-                <template #body="slotProps">
-                  <Avatar icon="pi pi-user" style="background-color: #9c27b0; color: #ffffff" shape="circle" />
-                  {{ slotProps.data.responsibleUser.name }}
+                <template #content>
+                  <DataTable :value="slotProps.data.contacts">
+                    <Column field="name" header="Имя" />
+                    <Column field="phone" header="Телефон" />
+                    <Column field="email" header="Email" />
+                  </DataTable>
                 </template>
-              </Column>
-              <Column field="createdDate" header="Дата создания" />
-            </div>
+              </Card>
+            </template>
+
             <div class="grid place-content-center">
               <ProgressSpinner
                 v-if="isLoadingData"
@@ -102,3 +117,30 @@ async function updateAuthInfo(e) {
   }
 }
 </script>
+
+<style>
+.p-datatable .p-datatable-thead tr th {
+    text-align: left;
+    padding: 1rem 1rem;
+    border: 1px solid #e5e7eb;
+    border-width: 0 0 1px 0;
+    font-weight: 700;
+    color: #374151;
+    background: #f9fafb;
+    transition: box-shadow 0.2s;
+}
+.p-datatable .p-datatable-tbody tr td {
+    text-align: left;
+    border: 1px solid #e5e7eb;
+    border-width: 0 0 1px 0;
+    padding: 1rem 1rem;
+}
+
+.p-tag-value {
+  padding: 0.4rem;
+}
+
+.contacts-title {
+  font-size: 1rem;
+}
+</style>
